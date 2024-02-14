@@ -16,3 +16,6 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           usedocker: true
           docker_heroku_process_type: web
+        env:
+          HD_SOLARMANAGER_APIUSER: ${{ secrets.SOLARMANAGER_APIUSER }}
+          HD_SOLARMANAGER_APIPASSWORD: ${{ secrets.SOLARMANAGER_APIPASSWORD }}
