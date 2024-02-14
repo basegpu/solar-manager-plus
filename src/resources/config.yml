@@ -1,9 +1,21 @@
 name: 'The roof is on fire'
 date: '2024-02-14'
-volume: 30000
+volume: 25000
 location: Aarau
+sm_id: '00000000737164E2'
 prices:
-  - start: '2024-01-01'
-    end: '2024-12-31'
-    sell: 0.18
-    buy: 0.35
+  - first_date: '2024-01-01'
+    last_date: '2024-12-31'
+    slots:
+      - from_hour: 0
+        to_hour: 7
+        sell: 0.129
+        buy: 0.3146
+      - from_hour: 7
+        to_hour: 19
+        sell: 0.18
+        buy: 0.3697
+      - from_hour: 19
+        to_hour: 24
+        sell: 0.129
+        buy: 0.3146

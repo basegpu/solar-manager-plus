@@ -3,12 +3,22 @@ from pydantic import BaseModel
 import yaml
 
 
-class Price(BaseModel):
-    
-    start: dt.date
-    end: dt.date
+class Slot(BaseModel):
+        
+    from_hour: int
+    to_hour: int
     sell: float
     buy: float
+
+    def __str__(self) -> str:
+        return f'{self.from_hour} - {self.to_hour}'
+
+
+class Price(BaseModel):
+    
+    first_date: dt.date
+    last_date: dt.date
+    slots: list[Slot] = []
 
     def __str__(self) -> str:
         return f'{self.start} - {self.end}'
@@ -20,6 +30,7 @@ class Config(BaseModel):
     date: dt.date
     volume: int
     location: str
+    sm_id: str
     prices: list[Price] = []
 
     def __str__(self) -> str:

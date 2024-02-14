@@ -21,4 +21,10 @@ cfg = ApiConfig()
 
 
 def get_call(route: str, params: dict[str, Any] = {}) -> Response:
-    return get(f'{cfg.apiUrl}/{route}', params=params, auth=cfg.apiAuth)
+    response = get(f'{cfg.apiUrl}/{route}', params=params, auth=cfg.apiAuth)
+    response.raise_for_status()
+    return response
+
+
+def get_stats(sm_id: str, start: str, end: str) -> Response:
+    return get_call(f'statistics/gateways/{sm_id}', params={'accuracy': 'high', 'from': start, 'to': end})
