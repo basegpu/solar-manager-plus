@@ -23,17 +23,18 @@ def run():
     key = 'ammortization'
     df = pd.DataFrame({key: [0.0] * len(CONFIG.dates)}, index=CONFIG.dates)
     for date in df.index:
-        # find the prices for the date
-        price = next(p for p in CONFIG.prices if p.first_date <= date <= p.last_date)
+        # find the slots for the date
+        slots = next(s for s in CONFIG.structure if s.first_date <= date <= s.last_date and date.weekday() in s.days_of_week)
         # loop through the slots and get the according stats
-        for slot in price.slots:
+        hours = [0] + slots.switching_hours + [24]
+        for i in range(len(hours) - 1):
             t = time.time()
-            start = dt.datetime(date.year, date.month, date.day, slot.from_hour, tzinfo=pytz.timezone('CET'))
-            end = dt.datetime(date.year, date.month, date.day, slot.to_hour-1, 59, 59, 999, tzinfo=pytz.timezone('CET'))
+            start = dt.datetime(date.year, date.month, date.day, hours[i], tzinfo=pytz.timezone('CET'))
+            end = dt.datetime(date.year, date.month, date.day, hours[i+1]-1, 59, 59, 999, tzinfo=pytz.timezone('CET'))
             data = get_stats(CONFIG.sm_id, start.isoformat(), end.isoformat()).json()
-            savings = Statistics(**data).savings_for(slot)
+            savings = Statistics(**data).savings_for(CONFIG.tariffs[i%2])
             df[key][date] += savings
-            LOGGER.debug(f'calculated savings for ({date}, {slot}): {savings} chf, took {time.time() - t:.3f}s')
+            LOGGER.debug(f'calculated savings for ({date}, {hours[i]}-{hours[i+1]}): {savings} chf, took {time.time() - t:.3f}s')
     total = df.sum()[key]
     
     fig = px.bar(df, title=f'{total:.1f} from {CONFIG.volume} ammortized')

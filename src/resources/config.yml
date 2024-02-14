@@ -2,20 +2,22 @@ name: 'The roof is on fire'
 date: '2024-02-14'
 volume: 25000
 location: Aarau
+timezone: 'CET'
 sm_id: '00000000737164E2'
-prices:
+tariffs:
+  - sell: 0.129
+    buy: 0.3146
+  - sell: 0.18
+    buy: 0.3697
+structure:
   - first_date: '2024-01-01'
     last_date: '2024-12-31'
-    slots:
-      - from_hour: 0
-        to_hour: 7
-        sell: 0.129
-        buy: 0.3146
-      - from_hour: 7
-        to_hour: 19
-        sell: 0.18
-        buy: 0.3697
-      - from_hour: 19
-        to_hour: 24
-        sell: 0.129
-        buy: 0.3146
+    days_of_week: [7]
+  - first_date: '2024-01-01'
+    last_date: '2024-03-31'
+    days_of_week: [1, 2, 3, 4, 5, 6]
+    switching_hours: [7, 19]
+  - first_date: '2024-04-01'
+    last_date: '2024-09-30'
+    days_of_week: [1, 2, 3, 4, 5, 6]
+    switching_hours: [7, 12, 15, 19]
