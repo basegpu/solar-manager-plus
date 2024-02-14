@@ -1,0 +1,9 @@
+name: 'The roof is on fire'
+date: '2024-02-14'
+volume: 30000
+location: Aarau
+prices:
+  - start: '2024-01-01'
+    end: '2024-12-31'
+    sell: 0.18
+    buy: 0.35
