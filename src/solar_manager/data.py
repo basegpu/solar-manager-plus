@@ -3,6 +3,8 @@ from pydantic_settings import BaseSettings
 from requests import get, Response
 from typing import Any
 
+import streamlit as st
+
 from solar_manager.statistics import Statistics
 
 
@@ -28,12 +30,12 @@ def get_call(route: str, params: dict[str, Any] = {}) -> Response:
     response.raise_for_status()
     return response
 
-
+@st.cache_data
 def get_stats(sm_id: str, start: dt.datetime, end: dt.datetime) -> Statistics:
-        data = get_call(
-            f'statistics/gateways/{sm_id}',
-            params={
-                'accuracy': 'high',
-                'from': start.isoformat(),
-                'to': end.isoformat()})
-        return Statistics(**data.json())
+    data = get_call(
+        f'statistics/gateways/{sm_id}',
+        params={
+            'accuracy': 'high',
+            'from': start.isoformat(),
+            'to': end.isoformat()})
+    return Statistics(**data.json())
