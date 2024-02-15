@@ -37,14 +37,23 @@ def run():
                 df[k][date] += v
             LOGGER.debug(f'calculated savings for ({date}, {hours[i]}-{hours[i+1]}): {savings} chf, took {time.time() - t:.3f}s')
     
-    categories = df.sum()
-    summary = ', '.join([f'{v:.1f} {k}' for k,v in categories.items()])
-    total = categories.sum()
+    
+    summary = ', '.join([f'{v:.1f} {k}' for k,v in df.sum().items()])
+    cumsum = df.sum(axis=1).cumsum().to_frame('total')
+    exp_key = 'expected end'
+    cumsum[exp_key] = cumsum.apply(lambda x: CONFIG.expected_end(x['total'], x.name), axis=1)
+    
     st.write('---')
+    total = cumsum['total'].iloc[-1]
     st.write(f'ammortization: {total:.1f} CHF ({summary})')
     st.progress(total / CONFIG.volume, f'Expected date of full ammortization: {CONFIG.expected_end(total)}')
 
-    fig = px.bar(df)
+    fig = px.line(cumsum[exp_key], title='Expected date of full ammortization')
+    fig.update_traces(line_color='green')
+    fig.update_layout(showlegend=False, yaxis_title='Date', xaxis_title='Date')
+    st.plotly_chart(fig, use_container_width=True)
+
+    fig = px.bar(df, title='Daily savings')
     fig.update_layout(yaxis_title='Savings [CHF]', xaxis_title='Date')
     st.plotly_chart(fig, use_container_width=True)
 

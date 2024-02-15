@@ -46,8 +46,12 @@ class Config(BaseModel):
     def dates(self) -> list[dt.date]:
         return [self.date + dt.timedelta(days=x) for x in range((self.now.date() - self.date).days + 1)]
     
-    def expected_end(self, amount: float) -> dt.date:
-        delta = self.now - dt.datetime(self.date.year, self.date.month, self.date.day, tzinfo=pytz.timezone(self.timezone))
+    def datetime_from_date(self, date: dt.date) -> dt.datetime:
+        return dt.datetime(date.year, date.month, date.day, tzinfo=pytz.timezone(self.timezone))
+    
+    def expected_end(self, amount: float, asof: dt.date = None) -> dt.date:
+        asof = self.now if asof is None else self.datetime_from_date(asof + dt.timedelta(days=1))
+        delta = asof - self.datetime_from_date(self.date)
         days = delta.total_seconds() / 24 / 3600
         return self.date + dt.timedelta(days=self.volume / amount * days)
 
