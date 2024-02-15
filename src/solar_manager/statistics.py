@@ -9,6 +9,9 @@ class Statistics(BaseModel):
     production: float = Field()
     selfConsumption: float = Field()
 
+    def __str__(self) -> str:
+        return f'consumption: {self.consumption}, production: {self.production}, selfConsumption: {self.selfConsumption}'
+
     def savings_for(self, tariff: Tariff) -> tuple[float, float]:
         notSpent = self.selfConsumption / 1000 * tariff.buy
         sold = (self.production - self.selfConsumption) / 1000 * tariff.sell

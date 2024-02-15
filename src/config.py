@@ -39,12 +39,17 @@ class Config(BaseModel):
         return self.name
     
     @property
+    def now(self) -> dt.datetime:
+        return dt.datetime.now(pytz.timezone(self.timezone))
+    
+    @property
     def dates(self) -> list[dt.date]:
-        today = dt.datetime.now(pytz.timezone(self.timezone)).date()
-        return [self.date + dt.timedelta(days=x) for x in range((today - self.date).days + 1)]
+        return [self.date + dt.timedelta(days=x) for x in range((self.now.date() - self.date).days + 1)]
     
     def expected_end(self, amount: float) -> dt.date:
-        return self.date + dt.timedelta(days=(self.volume / amount))
+        delta = self.now - dt.datetime(self.date.year, self.date.month, self.date.day, tzinfo=pytz.timezone(self.timezone))
+        days = delta.total_seconds() / 24 / 3600
+        return self.date + dt.timedelta(days=self.volume / amount * days)
 
 
 with open('src/resources/config.yml', 'r') as stream:

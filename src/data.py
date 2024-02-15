@@ -1,6 +1,9 @@
+import datetime as dt
 from pydantic_settings import BaseSettings
 from requests import get, Response
 from typing import Any
+
+from solar_manager.statistics import Statistics
 
 
 class ApiConfig(BaseSettings):
@@ -26,5 +29,11 @@ def get_call(route: str, params: dict[str, Any] = {}) -> Response:
     return response
 
 
-def get_stats(sm_id: str, start: str, end: str) -> Response:
-    return get_call(f'statistics/gateways/{sm_id}', params={'accuracy': 'high', 'from': start, 'to': end})
+def get_stats(sm_id: str, start: dt.datetime, end: dt.datetime) -> Statistics:
+        data = get_call(
+            f'statistics/gateways/{sm_id}',
+            params={
+                'accuracy': 'high',
+                'from': start.isoformat(),
+                'to': end.isoformat()})
+        return Statistics(**data.json())

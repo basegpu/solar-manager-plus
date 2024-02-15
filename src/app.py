@@ -5,10 +5,10 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 from streamlit.logger import get_logger
+from data import get_stats
 from solar_manager.statistics import Statistics
 from utils import page_config
 from config import CONFIG
-from data import get_stats
 
 
 LOGGER = get_logger(__name__)
@@ -32,8 +32,7 @@ def run():
             t = time.time()
             start = dt.datetime(date.year, date.month, date.day, hours[i], tzinfo=pytz.timezone('CET'))
             end = dt.datetime(date.year, date.month, date.day, hours[i+1]-1, 59, 59, 999, tzinfo=pytz.timezone('CET'))
-            data = get_stats(CONFIG.sm_id, start.isoformat(), end.isoformat()).json()
-            savings = Statistics(**data).savings_for(CONFIG.tariffs[i%2])
+            savings = get_stats(CONFIG.sm_id, start, end).savings_for(CONFIG.tariffs[i%2])
             for iKey in range(len(keys)):
                 df[keys[iKey]][date] += savings[iKey]
             LOGGER.debug(f'calculated savings for ({date}, {hours[i]}-{hours[i+1]}): {savings} chf, took {time.time() - t:.3f}s')
