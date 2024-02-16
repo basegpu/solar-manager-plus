@@ -1,6 +1,4 @@
 import datetime as dt
-from random import randint
-import sys
 import time
 import pytz
 import pandas as pd
@@ -23,7 +21,7 @@ def run():
     st.write(f'Location: {CONFIG.location}, Timezone: {CONFIG.timezone}')
     st.write(f'Investment: {CONFIG.volume} CHF, Start: {CONFIG.date}')
 
-    keys = Savings.__fields__.keys()
+    keys = Savings.model_fields.keys()
     df = pd.DataFrame({key: [0.0] * len(CONFIG.dates) for key in keys}, index=CONFIG.dates)
     for date in df.index:
         # find the slots for the date
@@ -34,9 +32,7 @@ def run():
             t = time.time()
             start = dt.datetime(date.year, date.month, date.day, hours[i], tzinfo=pytz.timezone('CET'))
             end = dt.datetime(date.year, date.month, date.day, hours[i+1]-1, 59, 59, 999, tzinfo=pytz.timezone('CET'))
-            # use cache only for dates before today
-            id = randint(0, sys.maxsize) if date == CONFIG.now.date() else 0
-            savings = get_stats(CONFIG.sm_id, start, end, id).savings_for(CONFIG.tariffs[i%2])
+            savings = get_stats(CONFIG.sm_id, start, end).savings_for(CONFIG.tariffs[i%2])
             for k,v in savings.model_dump().items():
                 df[k][date] += v
             LOGGER.debug(f'calculated savings for ({date}, {hours[i]}-{hours[i+1]}): {savings} chf, took {time.time() - t:.3f}s')
