@@ -1,4 +1,6 @@
 import datetime as dt
+from random import randint
+import sys
 import time
 import pytz
 import pandas as pd
@@ -32,7 +34,9 @@ def run():
             t = time.time()
             start = dt.datetime(date.year, date.month, date.day, hours[i], tzinfo=pytz.timezone('CET'))
             end = dt.datetime(date.year, date.month, date.day, hours[i+1]-1, 59, 59, 999, tzinfo=pytz.timezone('CET'))
-            savings = get_stats(CONFIG.sm_id, start, end).savings_for(CONFIG.tariffs[i%2])
+            # use cache only for dates before today
+            id = randint(0, sys.maxsize) if date == CONFIG.now.date() else 0
+            savings = get_stats(CONFIG.sm_id, start, end, id).savings_for(CONFIG.tariffs[i%2])
             for k,v in savings.model_dump().items():
                 df[k][date] += v
             LOGGER.debug(f'calculated savings for ({date}, {hours[i]}-{hours[i+1]}): {savings} chf, took {time.time() - t:.3f}s')
