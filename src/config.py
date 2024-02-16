@@ -1,4 +1,5 @@
 import datetime as dt
+import glob
 from pydantic import BaseModel
 import pytz
 import yaml
@@ -50,9 +51,12 @@ class Config(BaseModel):
         return dt.datetime(date.year, date.month, date.day, tzinfo=pytz.timezone(self.timezone))
 
 
-with open('src/resources/config.yml', 'r') as stream:
-    try:
-        cfg = yaml.safe_load(stream)
-        CONFIG = Config(**cfg)
-    except yaml.YAMLError as e:
-        print(e)
+CONFIGS = []
+yml_files = glob.glob('src/resources/*.yml')
+for file in yml_files:
+    with open(file, 'r') as stream:
+        try:
+            cfg = yaml.safe_load(stream)
+            CONFIGS.append(Config(**cfg))
+        except yaml.YAMLError as e:
+            print(e)

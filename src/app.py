@@ -3,7 +3,7 @@ import streamlit as st
 from streamlit.logger import get_logger
 from savings import Savings
 from utils import page_config
-from config import CONFIG
+from config import CONFIGS
 
 
 LOGGER = get_logger(__name__)
@@ -12,16 +12,19 @@ LOGGER.setLevel('DEBUG')
 
 def run():
     page_config()
-    st.title(CONFIG.name)
-    st.write(f'Location: {CONFIG.location}, Timezone: {CONFIG.timezone}')
-    st.write(f'Investment: {CONFIG.volume} CHF, Start: {CONFIG.date}')
 
-    savings = Savings(CONFIG)
+    cfg = st.sidebar.selectbox('Select object', CONFIGS)
+
+    st.title(cfg.name)
+    st.write(f'Location: {cfg.location}, Timezone: {cfg.timezone}')
+    st.write(f'Investment: {cfg.volume} CHF, Start: {cfg.date}')
+
+    savings = Savings(cfg)
     
     st.write('---')
     status = savings.last_status
     st.write(f'ammortization: {status["total"]:.1f} CHF ({savings})')
-    st.progress(status['total'] / CONFIG.volume, f'Expected date of full ammortization: {status["expected end"]}')
+    st.progress(status['total'] / cfg.volume, f'Expected date of full ammortization: {status["expected end"]}')
 
     fig = px.line(savings.expected_ends, title='Expected date of full ammortization')
     fig.update_traces(line_color='green')
