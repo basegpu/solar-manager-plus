@@ -48,15 +48,6 @@ class Config(BaseModel):
     
     def datetime_from_date(self, date: dt.date) -> dt.datetime:
         return dt.datetime(date.year, date.month, date.day, tzinfo=pytz.timezone(self.timezone))
-    
-    def expected_end(self, amount: float, asof: dt.date = None) -> dt.date:
-        if asof is None or self.now.date() == asof:
-            asof = self.now
-        else:
-            asof = self.datetime_from_date(asof + dt.timedelta(days=1))
-        delta = asof - self.datetime_from_date(self.date)
-        days = delta.total_seconds() / 24 / 3600
-        return self.date + dt.timedelta(days=self.volume / amount * days)
 
 
 with open('src/resources/config.yml', 'r') as stream:
