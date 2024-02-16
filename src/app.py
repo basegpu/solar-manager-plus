@@ -16,7 +16,7 @@ def run():
     st.write(f'Location: {CONFIG.location}, Timezone: {CONFIG.timezone}')
     st.write(f'Investment: {CONFIG.volume} CHF, Start: {CONFIG.date}')
 
-    savings = Savings()
+    savings = Savings(CONFIG)
     
     st.write('---')
     status = savings.last_status
