@@ -50,7 +50,10 @@ class Config(BaseModel):
         return dt.datetime(date.year, date.month, date.day, tzinfo=pytz.timezone(self.timezone))
     
     def expected_end(self, amount: float, asof: dt.date = None) -> dt.date:
-        asof = self.now if asof is None else self.datetime_from_date(asof + dt.timedelta(days=1))
+        if asof is None or self.now.date() == asof:
+            asof = self.now
+        else:
+            asof = self.datetime_from_date(asof + dt.timedelta(days=1))
         delta = asof - self.datetime_from_date(self.date)
         days = delta.total_seconds() / 24 / 3600
         return self.date + dt.timedelta(days=self.volume / amount * days)
