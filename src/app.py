@@ -26,12 +26,12 @@ def run():
     st.write(f'ammortization: {status["total"]:.1f} CHF ({savings})')
     st.progress(status['total'] / cfg.volume, f'Expected date of full ammortization: {status["expected end"]}')
 
-    fig = px.line(savings.expected_ends, title='Expected date of full ammortization')
+    fig = px.line(savings.raw[savings.Columns.expected], title='Expected date of full ammortization')
     fig.update_traces(line_color='green')
     fig.update_layout(showlegend=False, yaxis_title='Date', xaxis_title='Date')
     st.plotly_chart(fig, use_container_width=True)
 
-    fig = px.bar(savings.raw, title='Daily savings')
+    fig = px.bar(savings.raw[[savings.Columns.notSpent, savings.Columns.sold]], title='Daily savings')
     fig.update_layout(yaxis_title='Savings [CHF]', xaxis_title='Date')
     st.plotly_chart(fig, use_container_width=True)
 
