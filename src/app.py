@@ -1,6 +1,7 @@
 import plotly.express as px
 import streamlit as st
 from streamlit.logger import get_logger
+from hourlyStats import HourlyStats
 from savings import Savings
 from utils import page_config
 from config import CONFIGS
@@ -35,6 +36,9 @@ def run():
     fig.update_layout(yaxis_title='Savings [CHF]', xaxis_title='Date')
     st.plotly_chart(fig, use_container_width=True)
 
+    # load hourly stats
+    hours = HourlyStats(cfg)
+    st.write(f'HourlyStats: {hours}')
 
 if __name__ == '__main__':
     LOGGER.info('Starting app')

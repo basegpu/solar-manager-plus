@@ -32,7 +32,7 @@ def get_call(route: str, params: dict[str, Any] = {}) -> Response:
 
 
 @st.cache_data
-def get_stats(sm_id: str, start: dt.datetime, end: dt.datetime, id: int) -> Statistics:
+def get_stats(sm_id: str, start: dt.datetime, end: dt.datetime, id: int = 0) -> Statistics:
     # id parameter is used to bypass the cache
     data = get_call(
         f'statistics/gateways/{sm_id}',

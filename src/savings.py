@@ -20,15 +20,15 @@ class Savings:
 
     def __init__(self, config: Config):
         self._cfg = config
-        dates = config.dates
+        self._filename = f'{RESOURCES_PATH}/{self._cfg.sm_id}_{self.__class__.__name__.lower()}.csv'
         try:
             # try to load cached data from file
-            self._df = pd.read_csv(f'{RESOURCES_PATH}/{self._cfg.sm_id}.csv', index_col=0, parse_dates=True)
+            self._df = pd.read_csv(self._filename, index_col=0, parse_dates=True)
             self._df.index = self._df.index.date
         except FileNotFoundError:
             # otherwise create a new dataframe
-            self._df = pd.DataFrame(columns=self.Columns.__members__.values())
-        for date in dates:
+            self._df = pd.DataFrame(self.Columns.__members__.keys())
+        for date in config.dates:
             if date in self._df.index:
                 # if there is already data for the date, skip loading it
                 continue
@@ -47,7 +47,7 @@ class Savings:
             self._df.at[date, self.Columns.total.value] = self._df[self.Columns.total.value].shift().iloc[-1] + self._df.loc[date].sum()
             self._df.at[date, self.Columns.total.expected] = self.calc_expected_end(self._df.at[date, self.Columns.total], date)
         # dump the data (without current day) to a file
-        self._df.iloc[0:-1].to_csv(f'{RESOURCES_PATH}/{self._cfg.sm_id}.csv')
+        self._df.iloc[0:-1].to_csv(self._filename)
     
     def __str__(self) -> str:
         return ', '.join([f'{v:.1f} {k}' for k,v in self._df[[self.Columns.notSpent, self.Columns.sold]].sum().items()])

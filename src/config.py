@@ -2,6 +2,7 @@ import datetime as dt
 import glob
 from pydantic import BaseModel
 import pytz
+from dateutil.rrule import rrule, HOURLY
 import yaml
 
 from utils import RESOURCES_PATH
@@ -48,6 +49,12 @@ class Config(BaseModel):
     @property
     def dates(self) -> list[dt.date]:
         return [self.date + dt.timedelta(days=x) for x in range((self.now.date() - self.date).days + 1)]
+
+    @property
+    def hourly_datetimes(self) -> list[dt.datetime]:
+        start = self.datetime_from_date(self.dates[0])
+        end = self.datetime_from_date(self.dates[-1])
+        return [dt for dt in rrule(HOURLY, dtstart=start, until=end)]
     
     def datetime_from_date(self, date: dt.date) -> dt.datetime:
         return dt.datetime(date.year, date.month, date.day, tzinfo=pytz.timezone(self.timezone))
