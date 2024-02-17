@@ -4,6 +4,8 @@ from pydantic import BaseModel
 import pytz
 import yaml
 
+from utils import RESOURCES_PATH
+
 
 class Tariff(BaseModel):
     
@@ -52,7 +54,7 @@ class Config(BaseModel):
 
 
 CONFIGS = []
-yml_files = glob.glob('src/resources/*.yml')
+yml_files = glob.glob(f'{RESOURCES_PATH}/*.yml')
 for file in yml_files:
     with open(file, 'r') as stream:
         try:

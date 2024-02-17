@@ -3,6 +3,7 @@ WORKDIR /app
 ENV TZ=UTC
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+COPY resources resources
 COPY src src
 
 FROM build AS streamlit
