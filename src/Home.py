@@ -23,20 +23,28 @@ def run():
     st.write(f'Location: {cfg.location}, Timezone: {cfg.timezone}')
     
     month = st.select_slider('Select Month', months_dict.keys(), value=2, format_func=lambda x: months_dict[x])
-    filter = f'{hours.Columns.month} == {month}'
-    day_view = hours.raw.query(filter).groupby('hour')[data_cols].mean()/1000
-    
-    fig = px.line(day_view, title='Average Daily Views',
+    fig = px.line(hours.day_view(month, 1000), title='Average Daily Views, per Month',
         color_discrete_map={
             hours.Columns.consumption: "red",
             hours.Columns.production: "yellow",
             hours.Columns.selfConsumption: "green",
         })
     fig.update_layout(
-        yaxis_title='kWh',
+        yaxis_title='MWh',
         xaxis_title='Hour of the day')
     st.plotly_chart(fig, use_container_width=True)
 
+    hour = st.slider('Select Hour', 1, 24, 12)
+    fig = px.bar(hours.year_view(hour, 1000), title='Average Yearly Views, per Hour',
+        color_discrete_map={
+            hours.Columns.consumption: "red",
+            hours.Columns.production: "yellow",
+            hours.Columns.selfConsumption: "green",
+        })
+    fig.update_layout(
+        yaxis_title='MWh',
+        xaxis_title='Month of the year')
+    st.plotly_chart(fig, use_container_width=True)
 
 if __name__ == '__main__':
     LOGGER.info('Starting app')

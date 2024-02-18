@@ -18,6 +18,8 @@ class HourlyStats:
         production = 'production'
         selfConsumption = 'selfConsumption'
     
+    _data_cols = [Columns.consumption, Columns.production, Columns.selfConsumption]
+    
     _types = {
         Columns.year: 'uint16',
         Columns.month: 'uint8',
@@ -53,6 +55,16 @@ class HourlyStats:
     @property
     def raw(self):
         return self._df
+    
+    def day_view(self, month: int, rate=1000) -> pd.DataFrame:
+        '''Returns the average hourly values for the given month, divided by the transformation rate (default 1000)'''
+        filter = f'{self.Columns.month} == {month}'
+        return self.raw.query(filter).groupby('hour')[self._data_cols].mean()/rate
+    
+    def year_view(self, hour: int, rate=1000) -> pd.DataFrame:
+        '''Returns the average monthly values for the given hour, divided by the transformation rate (default 1000)'''
+        filter = f'{self.Columns.hour} == {hour}'
+        return self.raw.query(filter).groupby('month')[self._data_cols].mean()/rate
 
     def add_row(self, start: datetime, end: datetime) -> None:
         stats = get_stats(self._cfg.sm_id, start, end)
