@@ -1,4 +1,3 @@
-import plotly.express as px
 import streamlit as st
 from streamlit.logger import get_logger
 from hourlyStats import HourlyStats
@@ -13,34 +12,23 @@ def run():
 
     # load hourly stats
     hours = HourlyStats(cfg)
-    data_cols = [hours.Columns.consumption, hours.Columns.production, hours.Columns.selfConsumption]
 
     st.title(cfg.name)
     st.write(f'Location: {cfg.location}, Timezone: {cfg.timezone}')
     
     month = st.select_slider('Select Month', months_dict.keys(), value=2, format_func=lambda x: months_dict[x])
-    fig = px.line(hours.day_view(month, 1000), title='Average Daily Views, per Month',
-        color_discrete_map={
-            hours.Columns.consumption: "red",
-            hours.Columns.production: "yellow",
-            hours.Columns.selfConsumption: "green",
-        })
-    fig.update_layout(
-        yaxis_title='MWh',
-        xaxis_title='Hour of the day')
-    st.plotly_chart(fig, use_container_width=True)
+    st.write(f'Average hourly data [kWh] for {months_dict[month]}')
+    st.area_chart(
+        hours.day_view(month, 1000),
+        use_container_width=True,
+        color=['#ff6666', '#ffff66', '#66ffff'])
 
     hour = st.slider('Select Hour', 1, 24, 12)
-    fig = px.bar(hours.year_view(hour, 1000), title='Average Yearly Views, per Hour',
-        color_discrete_map={
-            hours.Columns.consumption: "red",
-            hours.Columns.production: "yellow",
-            hours.Columns.selfConsumption: "green",
-        })
-    fig.update_layout(
-        yaxis_title='MWh',
-        xaxis_title='Month of the year')
-    st.plotly_chart(fig, use_container_width=True)
+    st.write(f'Average yearly data [kWh], for {hour}')
+    st.area_chart(
+        hours.year_view(hour, 1000),
+        use_container_width=True,
+        color=['#ff6666', '#ffff66', '#66ffff'])
 
 if __name__ == '__main__':
     LOGGER.info('Starting app')
