@@ -48,7 +48,7 @@ class HourlyStats:
     
     def __str__(self) -> str:
         sumCols = [self.Columns.production, self.Columns.consumption, self.Columns.selfConsumption]
-        return ', '.join([f'{v:.1f} {k}' for k,v in self._df[sumCols].sum().items()])
+        return ', '.join([f'{v/1e6:.2f} MWh {k}' for k,v in self._df[sumCols].sum().items()])
     
     @property
     def raw(self):

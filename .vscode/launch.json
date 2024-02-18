@@ -7,7 +7,7 @@
             "module": "streamlit",
             "args": [
                 "run",
-                "src/app.py",
+                "src/Home.py",
                 "--server.port",
                 "8501"
             ],

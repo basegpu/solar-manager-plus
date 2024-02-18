@@ -4,7 +4,7 @@ from streamlit.logger import get_logger
 from hourlyStats import HourlyStats
 from savings import Savings
 from utils import page_config
-from config import CONFIGS
+from config import CONFIGS, set_config, get_config
 
 
 LOGGER = get_logger(__name__)
@@ -15,7 +15,8 @@ def run():
     page_config()
 
     cfg = st.sidebar.selectbox('Select object', CONFIGS)
-
+    set_config(cfg)
+    
     st.title(cfg.name)
     st.write(f'Location: {cfg.location}, Timezone: {cfg.timezone}')
     st.write(f'Investment: {cfg.volume} CHF, Start: {cfg.date}')

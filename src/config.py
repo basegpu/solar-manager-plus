@@ -1,8 +1,9 @@
 import datetime as dt
+from dateutil.rrule import rrule, HOURLY
 import glob
 from pydantic import BaseModel
 import pytz
-from dateutil.rrule import rrule, HOURLY
+import streamlit as st
 import yaml
 
 from utils import RESOURCES_PATH
@@ -69,3 +70,10 @@ for file in yml_files:
             CONFIGS.append(Config(**cfg))
         except yaml.YAMLError as e:
             print(e)
+
+
+def set_config(config: Config) -> None:
+    st.session_state['config'] = config
+
+def get_config() -> Config:
+    return st.session_state['config']
