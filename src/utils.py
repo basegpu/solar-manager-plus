@@ -1,12 +1,14 @@
 import streamlit as st
 
-RESOURCES_PATH = 'resources'
+from config import CONFIGS, Config
 
-def page_config():
+
+def page_config() -> Config:
     st.set_page_config(
         page_title='Solar Manager - Addons',
         page_icon=':sun:',
     )
+    return st.sidebar.selectbox('Select object', CONFIGS)
 
 months_dict = {
     1: 'January',

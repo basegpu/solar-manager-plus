@@ -3,17 +3,13 @@ import streamlit as st
 from streamlit.logger import get_logger
 from hourlyStats import HourlyStats
 from utils import months_dict, page_config
-from config import CONFIGS, set_config
 
 
 LOGGER = get_logger(__name__)
 LOGGER.setLevel('DEBUG')
 
 def run():
-    page_config()
-
-    cfg = st.sidebar.selectbox('Select object', CONFIGS)
-    set_config(cfg)
+    cfg = page_config()
 
     # load hourly stats
     hours = HourlyStats(cfg)

@@ -1,9 +1,8 @@
 import datetime as dt
 from pydantic_settings import BaseSettings
 from requests import get, Response
-from typing import Any
-
 import streamlit as st
+from typing import Any
 
 from solar_manager.statistics import Statistics
 

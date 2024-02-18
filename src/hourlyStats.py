@@ -3,8 +3,8 @@ from enum import Enum
 import pandas as pd
 
 from config import Config
+from solar_manager import RESOURCES_PATH
 from solar_manager.data import get_stats
-from utils import RESOURCES_PATH
 
 
 class HourlyStats:

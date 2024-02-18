@@ -4,14 +4,12 @@ from streamlit.logger import get_logger
 from hourlyStats import HourlyStats
 from savings import Savings
 from utils import page_config
-from config import get_config
 
 
 LOGGER = get_logger(__name__)
 LOGGER.setLevel('DEBUG')
 
-page_config()
-cfg = get_config()
+cfg = page_config()
 
 st.title('Ammortization Forecast')
 st.write(f'Investment: {cfg.volume} CHF, Start: {cfg.date}')

@@ -6,7 +6,7 @@ import pytz
 import streamlit as st
 import yaml
 
-from utils import RESOURCES_PATH
+from solar_manager import RESOURCES_PATH
 
 
 class Tariff(BaseModel):
@@ -70,10 +70,3 @@ for file in yml_files:
             CONFIGS.append(Config(**cfg))
         except yaml.YAMLError as e:
             print(e)
-
-
-def set_config(config: Config) -> None:
-    st.session_state['config'] = config
-
-def get_config() -> Config:
-    return st.session_state['config']

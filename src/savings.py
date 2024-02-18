@@ -6,8 +6,8 @@ import pandas as pd
 import pytz
 
 from config import Config, Tariff
+from solar_manager import RESOURCES_PATH
 from solar_manager.data import get_stats
-from utils import RESOURCES_PATH
 
 
 class Savings:
