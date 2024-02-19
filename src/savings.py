@@ -1,5 +1,6 @@
 from datetime import datetime, date, timedelta
 from enum import Enum
+import math
 from random import randint
 import sys
 import pandas as pd
@@ -13,7 +14,7 @@ from solar_manager.data import get_stats
 class Savings:
 
     class Columns(str, Enum):
-        notSpent = 'notSpent'
+        notSpent = 'not spent'
         sold = 'sold'
         total = 'total'
         expected = 'expected end'
@@ -27,7 +28,7 @@ class Savings:
             self._df.index = self._df.index.date
         except FileNotFoundError:
             # otherwise create a new dataframe
-            self._df = pd.DataFrame(self.Columns.__members__.keys())
+            self._df = pd.DataFrame(columns=[e.value for e in self.Columns.__members__.values()])
         for date in config.dates:
             if date in self._df.index:
                 # if there is already data for the date, skip loading it
@@ -36,7 +37,7 @@ class Savings:
                 # otherwise init a new row
                 self._df.loc[date] = [0, 0, 0, None]
             # find the slots for the date
-            slots = next(s for s in self._cfg.structure if s.first_date <= date <= s.last_date and date.weekday() in s.days_of_week)
+            slots = next(s for s in self._cfg.structure if s.first_date <= date <= s.last_date and date.weekday()+1 in s.days_of_week)
             # loop through the slots and add the according savings
             hours = [0] + slots.switching_hours + [24]
             for i in range(len(hours) - 1):
@@ -44,8 +45,9 @@ class Savings:
                 end = datetime(date.year, date.month, date.day, hours[i+1]-1, 59, 59, 999, tzinfo=pytz.timezone('CET'))
                 self.add_savings(start, end, self._cfg.tariffs[i%2])
             # do some post processing
-            self._df.at[date, self.Columns.total.value] = self._df[self.Columns.total.value].shift().iloc[-1] + self._df.loc[date].sum()
-            self._df.at[date, self.Columns.total.expected] = self.calc_expected_end(self._df.at[date, self.Columns.total], date)
+            previous = self._df[self.Columns.total].shift().iloc[-1]
+            self._df.at[date, self.Columns.total] = (0.0 if math.isnan(previous) else previous) + self._df.loc[date].sum()
+            self._df.at[date, self.Columns.expected] = self.calc_expected_end(self._df.at[date, self.Columns.total], date)
         # dump the data (without current day) to a file
         self._df.iloc[0:-1].to_csv(self._filename)
     

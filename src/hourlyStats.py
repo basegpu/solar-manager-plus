@@ -38,7 +38,7 @@ class HourlyStats:
             self._df = pd.read_csv(self._filename, index_col=0, parse_dates=True)
         except FileNotFoundError:
             # otherwise create a new dataframe
-            self._df = pd.DataFrame(columns=self.Columns.__members__.keys())
+            self._df = pd.DataFrame(columns=[e.value for e in self.Columns.__members__.values()])
         # get all hours not already in the dataframe
         hours = [h for h in self._cfg.hourly_datetimes if h not in self._df.index]
         for i in range(len(hours) - 1):
